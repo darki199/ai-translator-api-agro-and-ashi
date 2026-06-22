@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse
-from app.routes import analyze, history, health
+from app.routes import analyze, history, health, web
 from app.database import engine, Base
 from app.config import config
 import logging
@@ -37,6 +37,7 @@ app = FastAPI(
 app.include_router(health.router, tags=["Health"])
 app.include_router(analyze.router, tags=["Translation"])
 app.include_router(history.router, tags=["History"])
+app.include_router(web.router, tags=["Web"])
 
 # Middleware для логирования запросов
 @app.middleware("http")
@@ -70,3 +71,12 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_event():
     logger.info("AI Translator API service shutting down")
+
+# Корневой маршрут (интерфейс уже на /)
+@app.get("/api")
+async def api_root():
+    return {
+        "message": "AI Translator API is running",
+        "docs": "/docs",
+        "web_interface": "/"
+    }

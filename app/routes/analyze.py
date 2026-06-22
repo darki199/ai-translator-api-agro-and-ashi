@@ -11,19 +11,13 @@ logger = logging.getLogger(__name__)
 
 @router.post("/analyze", response_model=TranslateResponse)
 async def translate_text(request: TranslateRequest, db: Session = Depends(get_db)):
-    # Валидация текста
     if not request.text or not request.text.strip():
         logger.warning("Empty text received")
-        raise HTTPException(
-            status_code=400,
-            detail="Text cannot be empty"
-        )
+        raise HTTPException(status_code=400, detail="Text cannot be empty")
     
     try:
-        # Выполнение перевода
         translation_result = translation_service.translate(request.text)
         
-        # Сохранение в БД
         history_entry = TranslationHistory(
             input_text=request.text,
             translated_text=translation_result["translated_text"],
@@ -49,7 +43,4 @@ async def translate_text(request: TranslateRequest, db: Session = Depends(get_db
         
     except Exception as e:
         logger.error(f"Translation failed: {e}")
-        raise HTTPException(
-            status_code=500,
-            detail=f"Translation service error: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Translation service error: {str(e)}")
