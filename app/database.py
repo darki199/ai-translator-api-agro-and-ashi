@@ -6,7 +6,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Берем URL из конфига (который читает .env)
 DATABASE_URL = config.DATABASE_URL
 
 engine = create_engine(

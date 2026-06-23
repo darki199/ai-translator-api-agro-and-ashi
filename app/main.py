@@ -7,7 +7,7 @@ import logging
 import sys
 from datetime import datetime
 
-# Настройка логирования
+
 logging.basicConfig(
     level=getattr(logging, config.LOG_LEVEL),
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -18,7 +18,6 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-# Создание таблиц в БД
 try:
     Base.metadata.create_all(bind=engine)
     logger.info("Database tables created successfully")
@@ -26,20 +25,17 @@ except Exception as e:
     logger.error(f"Failed to create database tables: {e}")
     raise
 
-# Создание FastAPI приложения
 app = FastAPI(
     title="AI Translator API",
     description="Translation service using Hugging Face models",
     version="1.0.0"
 )
 
-# Маршрутизация
 app.include_router(health.router, tags=["Health"])
 app.include_router(analyze.router, tags=["Translation"])
 app.include_router(history.router, tags=["History"])
 app.include_router(web.router, tags=["Web"])
 
-# Middleware для логирования запросов
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
     logger.info(f"Incoming request: {request.method} {request.url.path}")
@@ -54,7 +50,6 @@ async def log_requests(request: Request, call_next):
         logger.error(f"Request failed: {e}")
         raise
 
-# Обработчик ошибок
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request, exc):
     logger.error(f"HTTP exception: {exc.status_code} - {exc.detail}")
@@ -72,7 +67,6 @@ async def startup_event():
 async def shutdown_event():
     logger.info("AI Translator API service shutting down")
 
-# Корневой маршрут (интерфейс уже на /)
 @app.get("/api")
 async def api_root():
     return {

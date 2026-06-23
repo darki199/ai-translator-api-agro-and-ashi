@@ -17,7 +17,6 @@ class TranslationService:
             
             logger.info(f"🔄 Loading translation pipeline...")
             
-            # Используем pipeline для перевода
             self.translator = pipeline(
                 "translation",
                 model=self.model_name,
@@ -32,7 +31,6 @@ class TranslationService:
             self._setup_fallback()
     
     def _setup_fallback(self):
-        """Используем прямую загрузку модели"""
         try:
             from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
             
@@ -60,11 +58,9 @@ class TranslationService:
         
         try:
             if hasattr(self, 'translator') and self.translator:
-                # Используем pipeline
                 result = self.translator(text)
                 translated = result[0]['translation_text']
             else:
-                # Используем прямую загрузку
                 tokenizer = self.tokenizer
                 model = self.model
                 
@@ -99,7 +95,6 @@ class TranslationService:
                 "confidence_score": 0.0
             }
 
-# СОЗДАЁМ СЕРВИС
 try:
     translation_service = TranslationService()
 except Exception as e:

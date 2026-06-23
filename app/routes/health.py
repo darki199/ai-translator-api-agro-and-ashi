@@ -14,7 +14,6 @@ async def health_check(db: Session = Depends(get_db)):
     db_status = "connected"
     model_status = "loaded"
     
-    # Проверка БД
     try:
         db.execute(text("SELECT 1"))
         db_status = "connected"
@@ -22,9 +21,7 @@ async def health_check(db: Session = Depends(get_db)):
         db_status = f"error: {str(e)}"
         logger.error(f"Database health check failed: {e}")
     
-    # Проверка модели (упрощенно)
     try:
-        # Просто проверяем, что сервис создан
         if translation_service:
             model_status = "loaded"
         else:
